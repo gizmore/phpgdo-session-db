@@ -59,7 +59,7 @@ class GDO_Session extends GDO
 			GDT_Serialize::make('sess_data'),
 		];
 	}
-	public function getID() { return $this->gdoVar('sess_id'); }
+	public function getID() : ?string { return $this->gdoVar('sess_id'); }
 	public function getToken() { return $this->gdoVar('sess_token'); }
 	public function getUser() { return $this->getValue('sess_user'); }
 	public function getIP() { return $this->getValue('sess_ip'); }
