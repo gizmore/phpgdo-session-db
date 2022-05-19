@@ -45,7 +45,7 @@ class GDO_Session extends GDO
 	### GDO ###
 	###########
 // 	public function gdoCached() { return false; }
-	public function gdoEngine() { return self::MYISAM; }
+	public function gdoEngine() : string { return self::MYISAM; }
 	public function gdoColumns() : array
 	{
 		return [
