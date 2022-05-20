@@ -21,7 +21,7 @@ use GDO\Util\Math;
  * GDO Database Session handler.
  * 
  * @author gizmore
- * @version 7.0.0
+ * @version 7.0.1
  * @since 3.0.0
  */
 class GDO_Session extends GDO
@@ -29,7 +29,7 @@ class GDO_Session extends GDO
 	const DUMMY_COOKIE_EXPIRES = 300;
 	const DUMMY_COOKIE_CONTENT = 'GDO_like_16_byte';
 	
-	public static GDO_Session $INSTANCE;
+	public static $INSTANCE;
 	public static bool $STARTED = false;
 	
 	public static function isDB() { return true; }
@@ -102,7 +102,7 @@ class GDO_Session extends GDO
 	 */
 	public static function instance()
 	{
-	    if (!self::$INSTANCE)
+		if (!isset(self::$INSTANCE))
 	    {
 	        if (!self::$STARTED)
 	        {
@@ -122,12 +122,12 @@ class GDO_Session extends GDO
 	public static function init($cookieName='GDOv7', $domain='localhost', $seconds=-1, $httpOnly=true, $https=false, $samesite='Lax')
 	{
 		$tls = Application::instance()->isTLS();
-		self::$COOKIE_NAME = $cookieName;
-		self::$COOKIE_DOMAIN = $domain;
+		self::$COOKIE_NAME = (string) $cookieName;
+		self::$COOKIE_DOMAIN = (string) $domain;
 		self::$COOKIE_SECONDS = Math::clampInt($seconds, -1, Time::ONE_YEAR);
 		self::$COOKIE_JS = !$httpOnly;
 		self::$COOKIE_HTTPS = $https && $tls;
-		self::$COOKIE_SAMESITE = $samesite;
+		self::$COOKIE_SAMESITE = (string) $samesite;
 		if ($tls)
 		{
 			self::$COOKIE_NAME .= '_tls'; # SSL cookies have a different name to prevent locking
@@ -338,10 +338,4 @@ class GDO_Session extends GDO
 		$session->setCookie();
 		return $session;
 	}
-}
-
-# @TODO: remove session samesite config fallback when all sites are 6.11.3
-if (!defined('GDO_SESS_SAMESITE'))
-{
-	define('GDO_SESS_SAMESITE', 'Lax');
 }
