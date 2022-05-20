@@ -34,7 +34,7 @@ class GDO_Session extends GDO
 	
 	public static function isDB() { return true; }
 	
-	public  static string $COOKIE_NAME = 'GDO6';
+	public  static string $COOKIE_NAME = 'GDOv7';
 	private static string $COOKIE_DOMAIN = 'localhost';
 	private static bool   $COOKIE_JS = true;
 	private static bool   $COOKIE_HTTPS = true;
@@ -61,10 +61,10 @@ class GDO_Session extends GDO
 	}
 	public function getID() : ?string { return $this->gdoVar('sess_id'); }
 	public function getToken() { return $this->gdoVar('sess_token'); }
-	public function getUser() { return $this->getValue('sess_user'); }
-	public function getIP() { return $this->getValue('sess_ip'); }
-	public function getTime() { return $this->getValue('sess_time'); }
-	public function getData() { return $this->getValue('sess_data'); }
+	public function getUser() { return $this->gdoValue('sess_user'); }
+	public function getIP() { return $this->gdoVar('sess_ip'); }
+	public function getTime() { return $this->gdoValue('sess_time'); }
+	public function getData() { return $this->gdoValue('sess_data'); }
 	public function getLastURL() { return $this->gdoVar('sess_last_url'); }
 	
 	private $lock;
@@ -119,7 +119,7 @@ class GDO_Session extends GDO
 		self::$STARTED = false;
 	}
 	
-	public static function init($cookieName='GDO6', $domain='localhost', $seconds=-1, $httpOnly=true, $https=false, $samesite='Lax')
+	public static function init($cookieName='GDOv7', $domain='localhost', $seconds=-1, $httpOnly=true, $https=false, $samesite='Lax')
 	{
 		$tls = Application::instance()->isTLS();
 		self::$COOKIE_NAME = $cookieName;
