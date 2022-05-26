@@ -121,7 +121,7 @@ class GDO_Session extends GDO
 	
 	public static function init($cookieName='GDOv7', $domain='localhost', $seconds=-1, $httpOnly=true, $https=false, $samesite='Lax')
 	{
-		$tls = Application::instance()->isTLS();
+		$tls = Application::$INSTANCE->isTLS();
 		self::$COOKIE_NAME = (string) $cookieName;
 		self::$COOKIE_DOMAIN = (string) $domain;
 		self::$COOKIE_SECONDS = Math::clampInt($seconds, -1, Time::ONE_YEAR);
@@ -185,7 +185,7 @@ class GDO_Session extends GDO
 	 */
 	private static function start($cookieValue=true, $cookieIP=true)
 	{
-		$app = Application::instance();
+		$app = Application::$INSTANCE;
 	    if ($app->isInstall())
 	    {
 	        return false;
@@ -265,7 +265,7 @@ class GDO_Session extends GDO
 		
 		self::$INSTANCE = $session;
 		
-		$app = Application::instance();
+		$app = Application::$INSTANCE;
 		if ( (!$app->isCLI()) || ($app->isWebsocket()) )
 		{
 		    if (!($user = $session->getUser()))
@@ -280,7 +280,7 @@ class GDO_Session extends GDO
 	
 	private function setCookie()
 	{
-		if (!Application::instance()->isCLI())
+		if (!Application::$INSTANCE->isCLI())
 		{
 			if (@$_SERVER['REQUEST_METHOD'] !== 'OPTIONS')
 			{
@@ -312,7 +312,7 @@ class GDO_Session extends GDO
 	
 	private static function setDummyCookie()
 	{
-	    $app = Application::instance();
+	    $app = Application::$INSTANCE;
 		if ( (!$app->isCLI()) && (!$app->isUnitTests()) )
 		{
 			if (@$_SERVER['REQUEST_METHOD'] !== 'OPTIONS')
