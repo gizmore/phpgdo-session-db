@@ -113,10 +113,11 @@ class GDO_Session extends GDO
 		return self::$INSTANCE;
 	}
 	
-	public static function reset()
+	public static function reset() : self
 	{
 		self::$INSTANCE = null;
 		self::$STARTED = false;
+		return $this;
 	}
 	
 	public static function init($cookieName='GDOv7', $domain='localhost', $seconds=-1, $httpOnly=true, $https=false, $samesite='Lax')
