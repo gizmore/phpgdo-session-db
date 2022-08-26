@@ -113,7 +113,9 @@ class GDO_Session extends GDO
 		return self::$INSTANCE;
 	}
 	
-	public static function reset() : self
+	
+	
+	public function reset(bool $removeInput = false) : self
 	{
 		self::$INSTANCE = null;
 		self::$STARTED = false;
@@ -260,8 +262,11 @@ class GDO_Session extends GDO
 		# IP Check?
 		if ( ($ip = $session->getIP()) && ($ip !== GDT_IP::current()) )
 		{
-			Logger::logError("Invalid Sess IP! $ip != ".GDT_IP::current());
-			return false;
+			if (!GDT_IP::isLocal())
+			{
+				Logger::logError("Invalid Sess IP! $ip != ".GDT_IP::current());
+				return false;
+			}
 		}
 		
 		self::$INSTANCE = $session;
