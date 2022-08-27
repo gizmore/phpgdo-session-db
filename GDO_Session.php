@@ -247,7 +247,7 @@ class GDO_Session extends GDO
 		}
 		list($sessId, $sessToken) = @explode('-', $cookieValue, 2);
 		# Fetch from possibly from cache via find :)
-		if (!($session = self::table()->find($sessId, false)))
+		if (!($session = self::table()->getById($sessId)))
 		{
 			Logger::logError("Invalid SessID!");
 			return false;
