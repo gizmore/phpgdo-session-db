@@ -12,7 +12,6 @@ use GDO\Net\GDT_IP;
 use GDO\Net\GDT_Url;
 use GDO\User\GDO_User;
 use GDO\Core\Logger;
-use GDO\DB\Database;
 use GDO\Date\Time;
 use GDO\User\GDT_User;
 use GDO\Util\Math;
@@ -21,7 +20,7 @@ use GDO\Util\Math;
  * GDO Database Session handler.
  * 
  * @author gizmore
- * @version 7.0.0
+ * @version 7.0.1
  * @since 3.0.0
  */
 class GDO_Session extends GDO
@@ -67,25 +66,24 @@ class GDO_Session extends GDO
 	public function getData() { return $this->gdoValue('sess_data'); }
 	public function getLastURL() { return $this->gdoVar('sess_last_url'); }
 	
-	private $lock;
-	public function setLock($lock)
-	{
-	    $this->lock = $lock;
-	}
+// 	private $lock;
+// 	public function setLock($lock)
+// 	{
+// 	    $this->lock = $lock;
+// 	}
 	
-	public function __destruct()
-	{
-	    if ($this->lock)
-	    {
-	        Database::instance()->unlock($this->lock);
-	    }
-	}
+// 	public function __destruct()
+// 	{
+// 	    if ($this->lock)
+// 	    {
+// 	        Database::instance()->unlock($this->lock);
+// 	    }
+// 	}
 	
 	/**
 	 * Get current user or ghost.
-	 * @return GDO_User
 	 */
-	public static function user()
+	public static function user() : GDO_User
 	{
 	    if (self::$INSTANCE)
 	    {
@@ -97,10 +95,7 @@ class GDO_Session extends GDO
 		return GDO_User::ghost();
 	}
 	
-	/**
-	 * @return self
-	 */
-	public static function instance()
+	public static function instance() : ?self
 	{
 		if (!isset(self::$INSTANCE))
 	    {
@@ -112,8 +107,6 @@ class GDO_Session extends GDO
 	    }
 		return self::$INSTANCE;
 	}
-	
-	
 	
 	public function reset(bool $removeInput = false) : self
 	{
@@ -182,7 +175,7 @@ class GDO_Session extends GDO
 	
 	/**
 	 * Start and get user session
-	 * @param string $cookieval
+	 * @param string $cookieValue
 	 * @param string $cookieip
 	 * @return self
 	 */
@@ -191,7 +184,7 @@ class GDO_Session extends GDO
 		$app = Application::$INSTANCE;
 	    if ($app->isInstall())
 	    {
-	        return false;
+	    	return null;
 	    }
 	    
 	    if ( ($app->isCLI()) && (!$app->isWebsocket()) )
@@ -208,7 +201,7 @@ class GDO_Session extends GDO
 				self::setDummyCookie();
 // 				self::createSession($cookieIP);
 // 				self::setCookie();
-				return false;
+				return null;
 			}
 			$cookieValue = (string)$_COOKIE[self::$COOKIE_NAME];
 		}
@@ -226,7 +219,7 @@ class GDO_Session extends GDO
 		else
 		{
 			self::setDummyCookie();
-			return false;
+			return null;
 		}
 		
 		return $session;
@@ -286,7 +279,7 @@ class GDO_Session extends GDO
 	
 	private function setCookie()
 	{
-		if (!Application::$INSTANCE->isCLI())
+		if (Application::$INSTANCE->isWebserver())
 		{
 			if (@$_SERVER['REQUEST_METHOD'] !== 'OPTIONS')
 			{
@@ -344,4 +337,5 @@ class GDO_Session extends GDO
 		$session->setCookie();
 		return $session;
 	}
+
 }
