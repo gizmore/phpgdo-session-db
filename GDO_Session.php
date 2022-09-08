@@ -9,7 +9,6 @@ use GDO\Core\GDT_EditedAt;
 use GDO\Core\GDT_Serialize;
 use GDO\Core\GDT_Token;
 use GDO\Net\GDT_IP;
-use GDO\Net\GDT_Url;
 use GDO\User\GDO_User;
 use GDO\Core\Logger;
 use GDO\Date\Time;
@@ -54,7 +53,7 @@ class GDO_Session extends GDO
 			GDT_IP::make('sess_ip'),
 			GDT_CreatedAt::make('sess_created'),
 			GDT_EditedAt::make('sess_time'),
-			GDT_Url::make('sess_last_url'),
+// 			GDT_Url::make('sess_last_url'),
 			GDT_Serialize::make('sess_data'),
 		];
 	}
@@ -64,21 +63,6 @@ class GDO_Session extends GDO
 	public function getIP() { return $this->gdoVar('sess_ip'); }
 	public function getTime() { return $this->gdoValue('sess_time'); }
 	public function getData() { return $this->gdoValue('sess_data'); }
-	public function getLastURL() { return $this->gdoVar('sess_last_url'); }
-	
-// 	private $lock;
-// 	public function setLock($lock)
-// 	{
-// 	    $this->lock = $lock;
-// 	}
-	
-// 	public function __destruct()
-// 	{
-// 	    if ($this->lock)
-// 	    {
-// 	        Database::instance()->unlock($this->lock);
-// 	    }
-// 	}
 	
 	/**
 	 * Get current user or ghost.
@@ -128,6 +112,11 @@ class GDO_Session extends GDO
 		{
 			self::$COOKIE_NAME .= '_tls'; # SSL cookies have a different name to prevent locking
 		}
+	}
+	
+	public function getLastURL() : ?string
+	{
+		return GDO_User::current()->settingVar('User', 'last_url');
 	}
 	
 	######################
@@ -199,8 +188,6 @@ class GDO_Session extends GDO
 			if (!isset($_COOKIE[self::$COOKIE_NAME]))
 			{
 				self::setDummyCookie();
-// 				self::createSession($cookieIP);
-// 				self::setCookie();
 				return null;
 			}
 			$cookieValue = (string)$_COOKIE[self::$COOKIE_NAME];
