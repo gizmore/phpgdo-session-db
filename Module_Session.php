@@ -2,6 +2,7 @@
 namespace GDO\Session;
 
 use GDO\Core\GDO_Module;
+use GDO\UI\GDT_Divider;
 
 /**
  * Session module.
@@ -20,4 +21,16 @@ final class Module_Session extends GDO_Module
 		];
     }
     
+    public function getPrivacyRelatedFields(): array
+    {
+    	return [
+    		GDT_Divider::make('info_privacy_session_db'),
+    	];
+    }
+
+    public function onLoadLanguage(): void
+    {
+    	$this->loadLanguage('lang/sess_db');
+    }
+
 }
