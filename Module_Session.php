@@ -7,7 +7,7 @@ use GDO\UI\GDT_Divider;
 /**
  * Session module.
  *
- * @version 7.0.0
+ * @version 7.0.1
  * @since 5.0.1
  */
 final class Module_Session extends GDO_Module
