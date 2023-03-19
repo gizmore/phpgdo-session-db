@@ -92,7 +92,7 @@ class GDO_Session extends GDO
 		return self::$INSTANCE;
 	}
 	
-	public function reset(bool $removeInput = false) : self
+	public function reset(bool $removeInput = false): static
 	{
 		self::$INSTANCE = null;
 		self::$STARTED = false;
