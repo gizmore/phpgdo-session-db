@@ -1,29 +1,38 @@
 <?php
+declare(strict_types=1);
 namespace GDO\Session\Method;
 
-use GDO\DB\Database;
-use GDO\Session\GDO_Session;
-use GDO\Date\Time;
-use GDO\Cronjob\MethodCronjob;
 use GDO\Core\Application;
+use GDO\Cronjob\MethodCronjob;
+use GDO\Date\Time;
+use GDO\DB\Database;
+use GDO\Login\Method\Form;
+use GDO\Login\Method\Logout;
+use GDO\Register\Method\Activate;
+use GDO\Register\Method\Guest;
+use GDO\Session\GDO_Session;
 
 /**
  * Cronjob that deletes old sessions.
- * 
- * @author gizmore
- * @version 6.11.4
+ *
+ * @version 7.0.3
  * @since 6.1.0
- * 
- * @see Login_Form
- * @see Login_Logout
- * @see Register_Activate
- * @see Register_Guest
+ *
+ * @author gizmore
+ * @see Form
+ * @see Logout
+ * @see Activate
+ * @see Guest
  */
 final class CleanupSessions extends MethodCronjob
 {
-	public function runAt() { return $this->runHourly(); }
-	
-	public function run()
+
+	public function runAt(): string
+	{
+		return $this->runHourly();
+	}
+
+	public function run(): void
 	{
 		$cut = Time::getDate(Application::$MICROTIME - GDO_SESS_TIME);
 		GDO_Session::table()->deleteWhere("sess_time < '{$cut}'");
@@ -32,5 +41,5 @@ final class CleanupSessions extends MethodCronjob
 			$this->log("Deleted $deleted sessions.");
 		}
 	}
-	
+
 }
