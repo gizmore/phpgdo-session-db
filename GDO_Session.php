@@ -29,7 +29,7 @@ class GDO_Session extends GDO
 	final public const DUMMY_COOKIE_EXPIRES = 300;
 	final public const DUMMY_COOKIE_CONTENT = 'GDO_like_16_byte';
 
-	public static ?self $INSTANCE = null;
+	public static ?self $INSTANCE;
 
 	public static bool $STARTED = false;
 	public static string $COOKIE_NAME = 'GDOv7';
@@ -94,9 +94,14 @@ class GDO_Session extends GDO
 			{
 				self::$STARTED = true; # only one try
 				self::$INSTANCE = self::start();
+				return self::$INSTANCE;
 			}
 		}
-		return self::$INSTANCE;
+		else
+		{
+			return self::$INSTANCE;
+		}
+		return null;
 	}
 
 	/**
