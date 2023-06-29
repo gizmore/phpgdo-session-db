@@ -3,7 +3,9 @@ declare(strict_types=1);
 namespace GDO\Session;
 
 use GDO\Core\Application;
+use GDO\Core\Debug;
 use GDO\Core\GDO;
+use GDO\Core\GDO_DBException;
 use GDO\Core\GDT_AutoInc;
 use GDO\Core\GDT_CreatedAt;
 use GDO\Core\GDT_EditedAt;
@@ -138,14 +140,9 @@ class GDO_Session extends GDO
 			$session = self::createSession($cookieIP);
 		}
 		# Try to reload
-		elseif ($session = self::reloadCookie($cookieValue))
-		{
-		}
-		# Set special first dummy cookie
-		else
+		elseif (!($session = self::reloadCookie($cookieValue)))
 		{
 			self::setDummyCookie();
-			return null;
 		}
 
 		return $session;
@@ -169,7 +166,7 @@ class GDO_Session extends GDO
 			{
 				setcookie(self::$COOKIE_NAME, $this->cookieContent(), [
 					'expires' => Application::$TIME + self::$COOKIE_SECONDS,
-					'path' => GDO_WEB_ROOT,
+					'path' => '/',
 					'domain' => self::$COOKIE_DOMAIN,
 					'samesite' => self::$COOKIE_SAMESITE,
 					'secure' => self::cookieSecure(),
@@ -205,7 +202,7 @@ class GDO_Session extends GDO
 			return null;
 		}
 
-		[$sessId, $sessToken] = @explode('-', $cookieValue, 2);
+		[$sessId, $sessToken] = explode('-', $cookieValue, 2);
 
 		# Fetch from possibly from cache via find :)
 		if (!($session = self::getById($sessId)))
@@ -262,7 +259,7 @@ class GDO_Session extends GDO
 			{
 				setcookie(self::$COOKIE_NAME, self::DUMMY_COOKIE_CONTENT, [
 					'expires' => Application::$TIME + self::DUMMY_COOKIE_EXPIRES,
-					'path' => GDO_WEB_ROOT,
+					'path' => '/',
 					'domain' => self::$COOKIE_DOMAIN,
 					'samesite' => self::$COOKIE_SAMESITE,
 					'secure' => self::cookieSecure(),
@@ -321,9 +318,18 @@ class GDO_Session extends GDO
 		}
 	}
 
-	public static function commit(): void
+	public static function commit(): bool
 	{
-		self::$INSTANCE?->save();
+		try
+		{
+			self::$INSTANCE?->save();
+			return true;
+		}
+		catch (GDO_DBException $ex)
+		{
+			Debug::debugException($ex);
+			return false;
+		}
 	}
 
 	public static function getCookieValue(): ?string
